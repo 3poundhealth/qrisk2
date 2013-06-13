@@ -39,7 +39,7 @@
 #include <utils.h>
 
 static double cvd_male_raw(
-int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,double bmi,int ethrisk,int fh_cvd,double rati,double sbp,int smoke_cat,int surv,double town
+int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,double bmi,int ethrisk,int fh_cvd,double rati,double sbp,int smoke_cat,int surv,double town, int debug
 )
 {
 	double survivor[16] = {
@@ -104,8 +104,8 @@ int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,d
 	sbp = sbp - 131.575469970703120;
 	//town = town - 0.002737425966188;
 
-printf("a1: %6.2f, a2: %6.2f\n", age_1, age_2);
-printf("b1: %6.2f, b2: %6.2f\n", bmi_1, bmi_2);
+if(debug) printf("a1: %6.2f, a2: %6.2f\n", age_1, age_2);
+if(debug) printf("b1: %6.2f, b2: %6.2f\n", bmi_1, bmi_2);
 
 	/* Start of Sum */
 	double a=0;
@@ -125,7 +125,8 @@ printf("b1: %6.2f, b2: %6.2f\n", bmi_1, bmi_2);
 	a += sbp * 0.0099543428482831708000000;
 	//a += town * 0.0320608645752168620000000;
 
-printf("cr: %6.2f, bp: %6.2f\n", rati * 0.1533097330217813300000000, sbp * 0.0099543428482831708000000);
+if(debug)
+  printf("cr: %6.2f, bp: %6.2f\n", rati * 0.1533097330217813300000000, sbp * 0.0099543428482831708000000);
 
 	/* Sum from boolean values */
 
@@ -137,15 +138,16 @@ printf("cr: %6.2f, bp: %6.2f\n", rati * 0.1533097330217813300000000, sbp * 0.009
 	a += b_type2 * 0.8201160328780074900000000;
 	a += fh_cvd * 0.6962022338056947900000000;
 
-printf("af:%5.2f, ra:%5.2f, rn:%5.2f, tr:%5.2f, rl:%5.2f, db:%5.2f\n",
-b_AF * 0.8561770660317954400000000,
-b_ra * 0.3295853885133138700000000,
-b_renal * 0.7661782832063270800000000,
-b_treatedhyp * 0.6570994445804946300000000,
-fh_cvd * 0.6962022338056947900000000,
-b_type1 * 1.2235901893205057000000000 +
-b_type2 * 0.8201160328780074900000000
-);
+if(debug)
+  printf("af:%5.2f, ra:%5.2f, rn:%5.2f, tr:%5.2f, rl:%5.2f, db:%5.2f\n",
+  b_AF * 0.8561770660317954400000000,
+  b_ra * 0.3295853885133138700000000,
+  b_renal * 0.7661782832063270800000000,
+  b_treatedhyp * 0.6570994445804946300000000,
+  fh_cvd * 0.6962022338056947900000000,
+  b_type1 * 1.2235901893205057000000000 +
+  b_type2 * 0.8201160328780074900000000
+  );
 
 	/* Sum from interaction terms */
 
@@ -178,54 +180,56 @@ b_type2 * 0.8201160328780074900000000
 	a += age_2 * sbp * -0.0001231469495691592500000;
 	//a += age_2 * town * -0.0008493525147140088800000;
 
-printf("i:%6.2f u:%6.2f l:%6.2f\n",
-  Iethrisk[ethrisk]+
-  Ismoke[smoke_cat]+
-  bmi_1 * 1.3830867611940247000000000+
-  bmi_2 * -7.1627340311445842000000000+
-  b_AF * 0.8561770660317954400000000+
-  b_ra * 0.3295853885133138700000000+
-  b_renal * 0.7661782832063270800000000+
-  b_treatedhyp * 0.6570994445804946300000000+
-  b_type1 * 1.2235901893205057000000000+
-  b_type2 * 0.8201160328780074900000000+
-  fh_cvd * 0.6962022338056947900000000,
-  
-  age_1 * (smoke_cat==1) * 0.7675246688050250100000000+
-  age_1 * (smoke_cat==2) * 0.7287918369962067500000000+
-  age_1 * (smoke_cat==3) * 3.2938032311654148000000000+
-  age_1 * (smoke_cat==4) * 3.6962686629926185000000000+
-  age_1 * b_AF * 6.8279483425030065000000000+
-  age_1 * b_renal * -1.2499862850572443000000000+
-  age_1 * b_treatedhyp * 6.8793023059229004000000000+
-  age_1 * b_type1 * 2.5566900730730104000000000+
-  age_1 * b_type2 * 2.5043645216873411000000000+
-  age_1 * bmi_1 * 46.1982485629838000000000000+
-  age_1 * bmi_2 * -169.4442164713507000000000000+
-  age_1 * fh_cvd * 2.5891954185540058000000000+
+if(debug){
+  printf("i:%6.2f u:%6.2f l:%6.2f\n",
+    Iethrisk[ethrisk]+
+    Ismoke[smoke_cat]+
+    bmi_1 * 1.3830867611940247000000000+
+    bmi_2 * -7.1627340311445842000000000+
+    b_AF * 0.8561770660317954400000000+
+    b_ra * 0.3295853885133138700000000+
+    b_renal * 0.7661782832063270800000000+
+    b_treatedhyp * 0.6570994445804946300000000+
+    b_type1 * 1.2235901893205057000000000+
+    b_type2 * 0.8201160328780074900000000+
+    fh_cvd * 0.6962022338056947900000000,
+    
+    age_1 * (smoke_cat==1) * 0.7675246688050250100000000+
+    age_1 * (smoke_cat==2) * 0.7287918369962067500000000+
+    age_1 * (smoke_cat==3) * 3.2938032311654148000000000+
+    age_1 * (smoke_cat==4) * 3.6962686629926185000000000+
+    age_1 * b_AF * 6.8279483425030065000000000+
+    age_1 * b_renal * -1.2499862850572443000000000+
+    age_1 * b_treatedhyp * 6.8793023059229004000000000+
+    age_1 * b_type1 * 2.5566900730730104000000000+
+    age_1 * b_type2 * 2.5043645216873411000000000+
+    age_1 * bmi_1 * 46.1982485629838000000000000+
+    age_1 * bmi_2 * -169.4442164713507000000000000+
+    age_1 * fh_cvd * 2.5891954185540058000000000+
+    age_1 * sbp * 0.0328765577798371750000000,
+
+    age_2 * (smoke_cat==1) * -0.0028190973036285923000000+
+    age_2 * (smoke_cat==2) * -0.0074290549312194289000000+
+    age_2 * (smoke_cat==3) * 0.0006623943592407952700000+
+    age_2 * (smoke_cat==4) * -0.0009539165087934006100000+
+    age_2 * b_AF * 0.0051545540015502968000000+
+    age_2 * b_renal * -0.0190484751944149380000000+
+    age_2 * b_treatedhyp * 0.0042514995185120022000000+
+    age_2 * b_type1 * -0.0029641180896136064000000+
+    age_2 * b_type2 * -0.0049052623533052224000000+
+    age_2 * bmi_1 * 0.1174445082068387000000000+
+    age_2 * bmi_2 * -0.3493064079001478300000000+
+    age_2 * fh_cvd * -0.0059689380584026352000000+
+    age_2 * sbp * -0.0001231469495691592500000
+  );
+
+
+  printf("bp:%6.2f bu:%6.2f bl:%6.2f\n",
+  sbp,
   age_1 * sbp * 0.0328765577798371750000000,
-
-  age_2 * (smoke_cat==1) * -0.0028190973036285923000000+
-  age_2 * (smoke_cat==2) * -0.0074290549312194289000000+
-  age_2 * (smoke_cat==3) * 0.0006623943592407952700000+
-  age_2 * (smoke_cat==4) * -0.0009539165087934006100000+
-  age_2 * b_AF * 0.0051545540015502968000000+
-  age_2 * b_renal * -0.0190484751944149380000000+
-  age_2 * b_treatedhyp * 0.0042514995185120022000000+
-  age_2 * b_type1 * -0.0029641180896136064000000+
-  age_2 * b_type2 * -0.0049052623533052224000000+
-  age_2 * bmi_1 * 0.1174445082068387000000000+
-  age_2 * bmi_2 * -0.3493064079001478300000000+
-  age_2 * fh_cvd * -0.0059689380584026352000000+
   age_2 * sbp * -0.0001231469495691592500000
-);
-
-printf("bp:%6.2f bu:%6.2f bl:%6.2f\n",
-sbp,
-age_1 * sbp * 0.0328765577798371750000000,
-age_2 * sbp * -0.0001231469495691592500000
-);
-
+  );
+}
 	/* Calculate the score itself */
 	double score = 100.0 * (1 - pow(survivor[surv], exp(a)) );
 	return score;
@@ -301,7 +305,7 @@ int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,d
 }
 
 double cvd_male(
-int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,double bmi,int ethrisk,int fh_cvd,double rati,double sbp,int smoke_cat,int surv,double town,int *error,char *errorBuf,int errorBufSize
+int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,double bmi,int ethrisk,int fh_cvd,double rati,double sbp,int smoke_cat,int surv,double town,int *error,char *errorBuf,int errorBufSize, int debug
 )
 { /*
 	*error = 0;int ok = cvd_male_validation(age,b_AF,b_ra,b_renal,b_treatedhyp,b_type1,b_type2,bmi,ethrisk,fh_cvd,rati,sbp,smoke_cat,surv,town,errorBuf,errorBufSize);
@@ -309,6 +313,6 @@ int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,d
 		*error = 1;
 		return 0.0;
 	}*/
-	return cvd_male_raw(age,b_AF,b_ra,b_renal,b_treatedhyp,b_type1,b_type2,bmi,ethrisk,fh_cvd,rati,sbp,smoke_cat,surv,town);
+	return cvd_male_raw(age,b_AF,b_ra,b_renal,b_treatedhyp,b_type1,b_type2,bmi,ethrisk,fh_cvd,rati,sbp,smoke_cat,surv,town,debug);
 }
 

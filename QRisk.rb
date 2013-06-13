@@ -48,6 +48,7 @@ def eval options = {}
     @RHEUMATIOD_ARTHRITIS_INDEPENDENT = QRisk.RHEUMATIOD_ARTHRITIS_INDEPENDENT
     @SMOKER = options[:smoker]
     @SMOKER_DEPENDENT = QRisk.SMOKER_DEPENDENT
+    @DEBUG = options[:internal_debug]
 
     #validate
     raise @ERRORS[:gender] unless @GENDERS.include? @GENDER
@@ -67,10 +68,10 @@ def eval options = {}
     @BLOOD_PRESSURE_CENTER    = @BLOOD_PRESSURE    - @BLOOD_PRESSURE_CENTERING    [@GENDER]
     @CHOLESTEROL_RATIO_CENTER = @CHOLESTEROL_RATIO - @CHOLESTEROL_RATIO_CENTERING [@GENDER]
 
-printf "a1: %6.2f, a2: %6.2f\n", @AGE_UPPER, @AGE_LOWER
-printf "b1: %6.2f, b2: %6.2f\n", @BMI_UPPER, @BMI_LOWER
+printf "a1: %6.2f, a2: %6.2f\n", @AGE_UPPER, @AGE_LOWER if @DEBUG
+printf "b1: %6.2f, b2: %6.2f\n", @BMI_UPPER, @BMI_LOWER if @DEBUG
 printf "cr: %6.2f, bp: %6.2f\n", @CHOLESTEROL_RATIO_CENTER * @CHOLESTEROL_RATIO_CONTINUOUS [@GENDER],
-                                 @BLOOD_PRESSURE_CENTER    * @BLOOD_PRESSURE_CONTINUOUS    [@GENDER]
+                                 @BLOOD_PRESSURE_CENTER    * @BLOOD_PRESSURE_CONTINUOUS    [@GENDER] if @DEBUG
 
     #evaluate booleans
     @HEART_DISEASED_RELATIVE  = to_i options[:heart_diseased_relative]
@@ -85,8 +86,7 @@ printf "af:%5.2f, ra:%5.2f, rn:%5.2f, tr:%5.2f, rl:%5.2f, db:%5.2f\n",
 @KIDNEY_DISEASE                        * @KIDNEY_DISEASE_INDEPENDENT           [@GENDER],
 @BLOOD_PRESSURE_TREATMENT              * @BLOOD_PRESSURE_TREATMENT_INDEPENDENT [@GENDER],
 @HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER],
-@DIABETES_INDEPENDENT                   [@GENDER][@DIABETES]
-
+@DIABETES_INDEPENDENT                   [@GENDER][@DIABETES] if @DEBUG
 
 printf "i:%6.2f u:%6.2f l:%6.2f\n",
         @ETHNICITY_RISK                         [@GENDER][@ETHNICITY]                                           +
@@ -119,12 +119,12 @@ printf "i:%6.2f u:%6.2f l:%6.2f\n",
         @AGE_LOWER * @DIABETES_DEPENDENT        [@GENDER][:age_lower][@DIABETES]                                +
         @AGE_LOWER * @BMI_UPPER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_upper]                  +
         @AGE_LOWER * @BMI_LOWER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_lower]                  +
-        @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_lower]
+        @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_lower] if @DEBUG
 
 printf "bp:%6.2f bu:%6.2f bl:%6.2f\n",
 @BLOOD_PRESSURE_CENTER,
 @AGE_UPPER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_upper],
-@AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_lower]
+@AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_lower] if @DEBUG
 
   rescue => exception
     abort "\033[31merror: " + exception.message + "\033[0m"
@@ -134,11 +134,11 @@ printf "bp:%6.2f bu:%6.2f bl:%6.2f\n",
     "%.6f" % (
       100 * (1 - @DECADE_ODDS ** Math.exp(
         #age spread independent risks
-        @CHOLESTEROL_RATIO_CENTER              * @CHOLESTEROL_RATIO_CONTINUOUS         [@GENDER]                +
-        @BLOOD_PRESSURE_CENTER                 * @BLOOD_PRESSURE_CONTINUOUS            [@GENDER]                +
         @ETHNICITY_RISK                         [@GENDER][@ETHNICITY]                                           +
         @SMOKER_INDEPENDENT                     [@GENDER][@SMOKER]                                              +
         @DIABETES_INDEPENDENT                   [@GENDER][@DIABETES]                                            +
+        @CHOLESTEROL_RATIO_CENTER              * @CHOLESTEROL_RATIO_CONTINUOUS         [@GENDER]                +
+        @BLOOD_PRESSURE_CENTER                 * @BLOOD_PRESSURE_CONTINUOUS            [@GENDER]                +
         @BMI_UPPER                             * @BMI_CONTINUOUS                       [@GENDER][:bmi_upper]    +
         @BMI_LOWER                             * @BMI_CONTINUOUS                       [@GENDER][:bmi_lower]    +
         @HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER]                +

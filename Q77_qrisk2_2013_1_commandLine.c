@@ -72,7 +72,7 @@ void usage(void) {
 }
 
 int main (int argc, char *argv[]) {
-	if (argc!=16) {
+	if (argc<16) {
 		usage();
 		exit(1);
 	}
@@ -92,8 +92,9 @@ int main (int argc, char *argv[]) {
 	int smoke_cat = atoi(argv[13]);
 	int surv = atoi(argv[14]);
 	double town = atof(argv[15]);
+	int debug = argc == 17 ? atoi(argv[16]) : 0;
 
-	double score = cvd_male(age,b_AF,b_ra,b_renal,b_treatedhyp,b_type1,b_type2,bmi,ethrisk,fh_cvd,rati,sbp,smoke_cat,surv,town,&error,errorBuf,sizeof(errorBuf));
+	double score = cvd_male(age,b_AF,b_ra,b_renal,b_treatedhyp,b_type1,b_type2,bmi,ethrisk,fh_cvd,rati,sbp,smoke_cat,surv,town,&error,errorBuf,sizeof(errorBuf),debug);
 	if (error) {
 		printf("%s", errorBuf);
 		exit(1);

@@ -30,5 +30,5 @@
  */
 
 double cvd_male(
-int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,double bmi,int ethrisk,int fh_cvd,double rati,double sbp,int smoke_cat,int surv,double town,int *error,char *errorBuf,int errorBufSize
+int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,double bmi,int ethrisk,int fh_cvd,double rati,double sbp,int smoke_cat,int surv,double town,int *error,char *errorBuf,int errorBufSize,int debug
 );
