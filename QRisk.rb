@@ -569,5 +569,5 @@ end
 
 end
 
-puts QRisk.eval eval ARGV[0].to_s
+puts QRisk.eval ARGV[0] ? eval(ARGV[0].to_s) : {}
 
