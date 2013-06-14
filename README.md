@@ -6,10 +6,10 @@
 ![](http://ruby-doc.org/images/brick.png) ::eval(options) → Float or Error String
 
         Evaluates QRisk2 score
-    
+  
 ###   Parameters ###
   
-                options (Hash<Symbol, Object>) (defaults to: {}) — initial context configuration
+                options (`Hash<Symbol, Object>`) (defaults to: `{}`) — initial context configuration
 > `age:                      25..8  `  
 > `cholesterol_ratio:        1..12  `  
 > `blood_pressure:           70..210`  
@@ -19,7 +19,7 @@
 > `heart_diseased_relative:  true | false`  
 > `kidney_disease:           true | false`  
 > `rheumatoid_arthritis:     true | false`  
-> `gender:                   :male | :female`  
+> `gender:                   male | female`  
 > `smoker:                   non | ex | light |`  
 > `                          moderate | heavy  `  
 
