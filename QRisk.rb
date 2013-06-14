@@ -569,5 +569,5 @@ end
 
 end
 
-p QRisk.eval eval ARGV[0].to_s
+puts QRisk.eval eval ARGV[0].to_s
 
