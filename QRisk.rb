@@ -14,18 +14,26 @@ def eval options = {}
     @AGE_CENTERING = QRisk.AGE_CENTERING
     @AGE_CONTINUOUS = QRisk.AGE_CONTINUOUS
     @AGE_POLYNOMIAL = QRisk.AGE_POLYNOMIAL
+    @AGE_RANGE = QRisk.AGE_RANGE
+    @ATRIAL_FIBRILLATION_INDEPENDENT = QRisk.ATRIAL_FIBRILLATION_INDEPENDENT
+    @ATRIAL_FIBRILLATION_DEPENDENT = QRisk.ATRIAL_FIBRILLATION_DEPENDENT
     @BLOOD_PRESSURE = options[:blood_pressure]
     @BLOOD_PRESSURE_CENTERING = QRisk.BLOOD_PRESSURE_CENTERING
     @BLOOD_PRESSURE_CONTINUOUS = QRisk.BLOOD_PRESSURE_CONTINUOUS
     @BLOOD_PRESSURE_DEPENDENT = QRisk.BLOOD_PRESSURE_DEPENDENT
+    @BLOOD_PRESSURE_RANGE = QRisk.BLOOD_PRESSURE_RANGE
+    @BLOOD_PRESSURE_TREATMENT_INDEPENDENT = QRisk.BLOOD_PRESSURE_TREATMENT_INDEPENDENT
+    @BLOOD_PRESSURE_TREATMENT_DEPENDENT = QRisk.BLOOD_PRESSURE_TREATMENT_DEPENDENT
     @BMI = options[:body_mass_index]
     @BMI_CENTERING = QRisk.BMI_CENTERING
     @BMI_CONTINUOUS = QRisk.BMI_CONTINUOUS
     @BMI_DEPENDENT = QRisk.BMI_DEPENDENT
     @BMI_POLYNOMIAL = QRisk.BMI_POLYNOMIAL
+    @BMI_RANGE = QRisk.BMI_RANGE
     @CHOLESTEROL_RATIO = options[:cholesterol_ratio]
     @CHOLESTEROL_RATIO_CENTERING = QRisk.CHOLESTEROL_RATIO_CENTERING
     @CHOLESTEROL_RATIO_CONTINUOUS = QRisk.CHOLESTEROL_RATIO_CONTINUOUS
+    @CHOLESTEROL_RATIO_RANGE = QRisk.CHOLESTEROL_RATIO_RANGE
     @DECADE_ODDS = QRisk.DECADE_ODDS
     @DIABETES = options[:diabetes].to_sym
     @DIABETES_DEPENDENT = QRisk.DIABETES_DEPENDENT
@@ -36,30 +44,26 @@ def eval options = {}
     @ETHNICITY_TYPES = QRisk.ETHNICITY_TYPES
     @GENDER = options[:gender].to_sym
     @GENDERS = QRisk.GENDERS
-    @SMOKER = options[:smoker].to_sym
-    @SMOKER_INDEPENDENT = QRisk.SMOKER_INDEPENDENT
-    @SMOKER_DEPENDENT = QRisk.SMOKER_DEPENDENT
-    @SMOKER_TYPES = QRisk.SMOKER_TYPES
     @HEART_DISEASED_RELATIVE_INDEPENDENT = QRisk.HEART_DISEASED_RELATIVE_INDEPENDENT
     @HEART_DISEASED_RELATIVE_DEPENDENT = QRisk.HEART_DISEASED_RELATIVE_DEPENDENT
     @KIDNEY_DISEASE_INDEPENDENT = QRisk.KIDNEY_DISEASE_INDEPENDENT
     @KIDNEY_DISEASE_DEPENDENT = QRisk.KIDNEY_DISEASE_DEPENDENT
-    @ATRIAL_FIBRILLATION_INDEPENDENT = QRisk.ATRIAL_FIBRILLATION_INDEPENDENT
-    @ATRIAL_FIBRILLATION_DEPENDENT = QRisk.ATRIAL_FIBRILLATION_DEPENDENT
-    @BLOOD_PRESSURE_TREATMENT_INDEPENDENT = QRisk.BLOOD_PRESSURE_TREATMENT_INDEPENDENT
-    @BLOOD_PRESSURE_TREATMENT_DEPENDENT = QRisk.BLOOD_PRESSURE_TREATMENT_DEPENDENT
     @RHEUMATIOD_ARTHRITIS_INDEPENDENT = QRisk.RHEUMATIOD_ARTHRITIS_INDEPENDENT
+    @SMOKER = options[:smoker].to_sym
+    @SMOKER_INDEPENDENT = QRisk.SMOKER_INDEPENDENT
+    @SMOKER_DEPENDENT = QRisk.SMOKER_DEPENDENT
+    @SMOKER_TYPES = QRisk.SMOKER_TYPES
 
     @DEBUG = options[:internal_debug]
 
     #validate
-    raise @ERRORS[:gender] unless @GENDERS.include? @GENDER
-    raise @ERRORS[:age] unless (25..84).include? @AGE or @AGE == 0
-    raise @ERRORS[:bmi] unless (20..40).include? @BMI or @BMI == 0
-    raise @ERRORS[:blood_pressure] unless (70..210).include? @BLOOD_PRESSURE or @BLOOD_PRESSURE == 0
-    raise @ERRORS[:cholesterol_ratio] unless (1..12).include? @CHOLESTEROL_RATIO or @CHOLESTEROL_RATIO == 0
+    raise @ERRORS[:age] unless @AGE_RANGE.include? @AGE or @AGE == 0
+    raise @ERRORS[:blood_pressure] unless @BLOOD_PRESSURE_RANGE.include? @BLOOD_PRESSURE or @BLOOD_PRESSURE == 0
+    raise @ERRORS[:bmi] unless @BMI_RANGE.include? @BMI or @BMI == 0
+    raise @ERRORS[:cholesterol_ratio] unless @CHOLESTEROL_RATIO_RANGE.include? @CHOLESTEROL_RATIO or @CHOLESTEROL_RATIO == 0
     raise @ERRORS[:diabetes] unless @DIABETES_TYPES.include? @DIABETES
     raise @ERRORS[:ethnicity] unless @ETHNICITY_TYPES.include? @ETHNICITY
+    raise @ERRORS[:gender] unless @GENDERS.include? @GENDER
     raise @ERRORS[:smoker] unless @SMOKER_TYPES.include? @SMOKER
 
     #scale these "constants"
@@ -203,6 +207,17 @@ def OPTIONS;{ #default options
   blood_pressure:           0.0
 };end
 
+def ERRORS;{
+  age:              "age must be in range: " + QRisk.AGE_RANGE.to_s,
+  blood_pressure:   "blood pressure must be in range: " + QRisk.BLOOD_PRESSURE_RANGE.to_s,
+  bmi:              "bmi must be in range: " + QRisk.BMI_RANGE.to_s,
+  cholesterol_ratio:"cholesterol ratio must be in range: " + QRisk.CHOLESTEROL_RATIO_RANGE.to_s,
+  diabetes:         "invalid diabetes type, options: " + QRisk.DIABETES_TYPES.map{|_|_.to_s}.to_s,
+  ethnicity:        "invalid ethnicity type, options: " + QRisk.ETHNICITY_TYPES.map{|_|_.to_s}.to_s,
+  gender:           "invalid gender, options: " + QRisk.GENDERS.map{|_|_.to_s}.to_s,
+  smoker:           "invalid smoker type, options: " + QRisk.SMOKER_TYPES.map{|_|_.to_s}.to_s
+};end
+
 def DIABETES_TYPES;[
   :none,
   :type_1,
@@ -234,7 +249,203 @@ def SMOKER_TYPES;[
   :heavy
 ];end
 
+def AGE_SCALE;            0.1; end
+
+def AGE_CONTINUOUS;{
+  male:{
+    age_upper:          -19.4666173334122840000000000,
+    age_lower:            0.0201364267507625730000000
+  },
+  female:{
+    age_upper:            4.1924277678057837000000000,
+    age_lower:            0.0727365264473135150000000
+  }
+};end
+
+def AGE_POLYNOMIAL;{
+  male:{
+    age_upper:           -1,
+    age_lower:            2
+  },
+  female:{
+    age_upper:            0.5,
+    age_lower:            1
+  }
+};end
+
+def AGE_CENTERING;{
+  male:{
+    age_upper:            0.229260012507439,
+    age_lower:           19.025821685791016
+  },
+  female:{
+    age_upper:            2.111304044723511,
+    age_lower:            4.457604408264160
+  }
+};end
+
+def AGE_RANGE; (25..84); end
+
+def ATRIAL_FIBRILLATION_INDEPENDENT;{
+  male:                   0.8561770660317954400000000,
+  female:                 1.2548823570386274000000000
+};end
+
+def ATRIAL_FIBRILLATION_DEPENDENT;{
+  male:{
+    age_upper:            6.8279483425030065000000000,
+    age_lower:            0.0051545540015502968000000
+  },
+  female:{
+    age_upper:           -2.0489636167088636000000000,
+    age_lower:            0.1989800041198926100000000
+  }
+};end
+
+def BLOOD_PRESSURE_CENTERING;{
+  male:                 131.575469970703120,
+  female:               126.525978088378910
+};end
+
+def BLOOD_PRESSURE_CONTINUOUS;{
+  male:                   0.0099543428482831708000000,
+  female:                 0.0124301977948376370000000
+};end
+
+def BLOOD_PRESSURE_DEPENDENT;{
+  male:{
+    age_upper:            0.0328765577798371750000000,
+    age_lower:           -0.0001231469495691592500000
+  },
+  female:{
+    age_upper:            0.0035841283715529319000000,
+    age_lower:           -0.0037836254753488216000000
+  }
+};end
+
+def BLOOD_PRESSURE_TREATMENT_INDEPENDENT;{
+  male:                   0.6570994445804946300000000,
+  female:                 0.6183822524814552900000000
+};end
+
+def BLOOD_PRESSURE_TREATMENT_DEPENDENT;{
+  male:{
+    age_upper:            6.8793023059229004000000000,
+    age_lower:            0.0042514995185120022000000
+  },
+  female:{
+    age_upper:           -3.9467205554873872000000000,
+    age_lower:            0.6659359807539360100000000
+  }
+};end
+
+def BLOOD_PRESSURE_RANGE; (70..210); end
+
+
+def BMI_SCALE;            0.1; end
+
+def BMI_POLYNOMIAL;      -2; end
+
+def BMI_CENTERING;{
+  male:{
+    bmi_upper:            0.146091341972351,
+    bmi_lower:            0.140505045652390
+  },
+  female:{
+    bmi_upper:            0.153318107128143,
+    bmi_lower:            0.143754154443741
+  }
+};end
+
+def BMI_CONTINUOUS;{
+  male:{
+    bmi_upper:            1.3830867611940247000000000,
+    bmi_lower:           -7.1627340311445842000000000
+  },
+  female:{
+    bmi_upper:           -0.4914322358663353900000000,
+    bmi_lower:           -2.9736893891126503000000000
+  }
+};end
+
+def BMI_DEPENDENT;{
+  male:{
+    age_upper:{
+      bmi_upper:         46.1982485629838000000000000,
+      bmi_lower:       -169.4442164713507000000000000
+    },
+    age_lower:{
+      bmi_upper:          0.1174445082068387000000000,
+      bmi_lower:         -0.3493064079001478300000000
+    }
+  },
+  female:{
+    age_upper:{
+      bmi_upper:         15.6869018580842020000000000,
+      bmi_lower:         10.5172051502483440000000000
+    },
+    age_lower:{
+      bmi_upper:         -3.0654336861574962000000000,
+      bmi_lower:         -1.0265341871793443000000000
+    }
+  }
+};end
+
+def BMI_RANGE; (20..40); end
+
+def CHOLESTEROL_RATIO_CENTERING;{
+  male:                   4.400725841522217,
+  female:                 3.597785472869873
+};end
+
+def CHOLESTEROL_RATIO_CONTINUOUS;{
+  male:                   0.1533097330217813300000000,
+  female:                 0.1456741893144524700000000
+};end
+
+def CHOLESTEROL_RATIO_RANGE; (1..12); end
+
 def DECADE_ODDS;          0.978206992149353; end
+
+def DIABETES_DEPENDENT;{
+  male:{
+    age_upper:{
+      none:               0,
+      type_1:             2.5566900730730104000000000,
+      type_2:             2.5043645216873411000000000
+    },
+    age_lower:{
+      none:               0,
+      type_1:            -0.0029641180896136064000000,
+      type_2:            -0.0049052623533052224000000
+    }
+  },
+  female:{
+    age_upper:{
+      none:               0,
+      type_1:             5.0295952006040174000000000,
+      type_2:            -4.1006039491910871000000000
+    },
+    age_lower:{
+      none:               0,
+      type_1:            -1.3790306447153591000000000,
+      type_2:             0.6477002677213917800000000
+    }
+  }
+};end
+
+def DIABETES_INDEPENDENT;{
+  male:{
+    none:                 0,
+    type_1:               1.2235901893205057000000000,
+    type_2:               0.8201160328780074900000000
+  },
+  female:{
+    none:                 0,
+    type_1:               1.7623106103850039000000000,
+    type_2:               1.0714795465634313000000000
+  }
+};end
 
 def ETHNICITY_RISK;{
   male:{
@@ -259,6 +470,43 @@ def ETHNICITY_RISK;{
     chinese:             -0.4631969844038496000000000,
     other:               -0.0934620942542618430000000
   }
+};end
+
+def KIDNEY_DISEASE_INDEPENDENT;{
+  male:                   0.7661782832063270800000000,
+  female:                 0.8000369779764396900000000
+};end
+
+def KIDNEY_DISEASE_DEPENDENT;{
+  male:{
+    age_upper:           -1.2499862850572443000000000,
+    age_lower:           -0.0190484751944149380000000
+  },
+  female:{
+    age_upper:            2.1378812069259072000000000,
+    age_lower:           -0.5666471358116902400000000
+  }
+};end
+
+def HEART_DISEASED_RELATIVE_INDEPENDENT;{
+  male:                   0.6962022338056947900000000,
+  female:                 0.6138914873273221300000000
+};end
+
+def HEART_DISEASED_RELATIVE_DEPENDENT;{
+  male:{
+    age_upper:            2.5891954185540058000000000,
+    age_lower:           -0.0059689380584026352000000
+  },
+  female:{
+    age_upper:            0.1788021490217178200000000,
+    age_lower:           -0.1598294041246048900000000
+  }
+};end
+
+def RHEUMATIOD_ARTHRITIS_INDEPENDENT;{
+  male:                   0.3295853885133138700000000,
+  female:                 0.3660166445401525400000000
 };end
 
 def SMOKER_INDEPENDENT;{
@@ -313,241 +561,6 @@ def SMOKER_DEPENDENT;{
   }
 };end
 
-def DIABETES_DEPENDENT;{
-  male:{
-    age_upper:{
-      none:               0,
-      type_1:             2.5566900730730104000000000,
-      type_2:             2.5043645216873411000000000
-    },
-    age_lower:{
-      none:               0,
-      type_1:            -0.0029641180896136064000000,
-      type_2:            -0.0049052623533052224000000
-    }
-  },
-  female:{
-    age_upper:{
-      none:               0,
-      type_1:             5.0295952006040174000000000,
-      type_2:            -4.1006039491910871000000000
-    },
-    age_lower:{
-      none:               0,
-      type_1:            -1.3790306447153591000000000,
-      type_2:             0.6477002677213917800000000
-    }
-  }
-};end
-
-def DIABETES_INDEPENDENT;{
-  male:{
-    none:                 0,
-    type_1:               1.2235901893205057000000000,
-    type_2:               0.8201160328780074900000000
-  },
-  female:{
-    none:                 0,
-    type_1:               1.7623106103850039000000000,
-    type_2:               1.0714795465634313000000000
-  }
-};end
-
-def AGE_SCALE;            0.1; end
-
-def AGE_CONTINUOUS;{
-  male:{
-    age_upper:          -19.4666173334122840000000000,
-    age_lower:            0.0201364267507625730000000
-  },
-  female:{
-    age_upper:            4.1924277678057837000000000,
-    age_lower:            0.0727365264473135150000000
-  }
-};end
-
-def AGE_POLYNOMIAL;{
-  male:{
-    age_upper:           -1,
-    age_lower:            2
-  },
-  female:{
-    age_upper:            0.5,
-    age_lower:            1
-  }
-};end
-
-def AGE_CENTERING;{
-  male:{
-    age_upper:            0.229260012507439,
-    age_lower:           19.025821685791016
-  },
-  female:{
-    age_upper:            2.111304044723511,
-    age_lower:            4.457604408264160
-  }
-};end
-
-def BMI_SCALE;            0.1; end
-
-def BMI_POLYNOMIAL;      -2; end
-
-def BMI_CENTERING;{
-  male:{
-    bmi_upper:            0.146091341972351,
-    bmi_lower:            0.140505045652390
-  },
-  female:{
-    bmi_upper:            0.153318107128143,
-    bmi_lower:            0.143754154443741
-  }
-};end
-
-def BMI_CONTINUOUS;{
-  male:{
-    bmi_upper:            1.3830867611940247000000000,
-    bmi_lower:           -7.1627340311445842000000000
-  },
-  female:{
-    bmi_upper:           -0.4914322358663353900000000,
-    bmi_lower:           -2.9736893891126503000000000
-  }
-};end
-
-def BMI_DEPENDENT;{
-  male:{
-    age_upper:{
-      bmi_upper:         46.1982485629838000000000000,
-      bmi_lower:       -169.4442164713507000000000000
-    },
-    age_lower:{
-      bmi_upper:          0.1174445082068387000000000,
-      bmi_lower:         -0.3493064079001478300000000
-    }
-  },
-  female:{
-    age_upper:{
-      bmi_upper:         15.6869018580842020000000000,
-      bmi_lower:         10.5172051502483440000000000
-    },
-    age_lower:{
-      bmi_upper:         -3.0654336861574962000000000,
-      bmi_lower:         -1.0265341871793443000000000
-    }
-  }
-};end
-
-def CHOLESTEROL_RATIO_CENTERING;{
-  male:                   4.400725841522217,
-  female:                 3.597785472869873
-};end
-
-def CHOLESTEROL_RATIO_CONTINUOUS;{
-  male:                   0.1533097330217813300000000,
-  female:                 0.1456741893144524700000000
-};end
-
-def BLOOD_PRESSURE_CENTERING;{
-  male:                 131.575469970703120,
-  female:               126.525978088378910
-};end
-
-def BLOOD_PRESSURE_CONTINUOUS;{
-  male:                   0.0099543428482831708000000,
-  female:                 0.0124301977948376370000000
-};end
-
-def BLOOD_PRESSURE_DEPENDENT;{
-  male:{
-    age_upper:            0.0328765577798371750000000,
-    age_lower:           -0.0001231469495691592500000
-  },
-  female:{
-    age_upper:            0.0035841283715529319000000,
-    age_lower:           -0.0037836254753488216000000
-  }
-};end
-
-def HEART_DISEASED_RELATIVE_INDEPENDENT;{
-  male:                   0.6962022338056947900000000,
-  female:                 0.6138914873273221300000000
-};end
-
-def HEART_DISEASED_RELATIVE_DEPENDENT;{
-  male:{
-    age_upper:            2.5891954185540058000000000,
-    age_lower:           -0.0059689380584026352000000
-  },
-  female:{
-    age_upper:            0.1788021490217178200000000,
-    age_lower:           -0.1598294041246048900000000
-  }
-};end
-
-def KIDNEY_DISEASE_INDEPENDENT;{
-  male:                   0.7661782832063270800000000,
-  female:                 0.8000369779764396900000000
-};end
-
-def KIDNEY_DISEASE_DEPENDENT;{
-  male:{
-    age_upper:           -1.2499862850572443000000000,
-    age_lower:           -0.0190484751944149380000000
-  },
-  female:{
-    age_upper:            2.1378812069259072000000000,
-    age_lower:           -0.5666471358116902400000000
-  }
-};end
-
-def ATRIAL_FIBRILLATION_INDEPENDENT;{
-  male:                   0.8561770660317954400000000,
-  female:                 1.2548823570386274000000000
-};end
-
-def ATRIAL_FIBRILLATION_DEPENDENT;{
-  male:{
-    age_upper:            6.8279483425030065000000000,
-    age_lower:            0.0051545540015502968000000
-  },
-  female:{
-    age_upper:           -2.0489636167088636000000000,
-    age_lower:            0.1989800041198926100000000
-  }
-};end
-
-def BLOOD_PRESSURE_TREATMENT_INDEPENDENT;{
-  male:                   0.6570994445804946300000000,
-  female:                 0.6183822524814552900000000
-};end
-
-def BLOOD_PRESSURE_TREATMENT_DEPENDENT;{
-  male:{
-    age_upper:            6.8793023059229004000000000,
-    age_lower:            0.0042514995185120022000000
-  },
-  female:{
-    age_upper:           -3.9467205554873872000000000,
-    age_lower:            0.6659359807539360100000000
-  }
-};end
-
-def RHEUMATIOD_ARTHRITIS_INDEPENDENT;{
-  male:                   0.3295853885133138700000000,
-  female:                 0.3660166445401525400000000
-};end
-
-def ERRORS;{
-  age:              "age must be in range (25, 84)",
-  blood_pressure:   "blood pressure must be in range (70,210)",
-  bmi:              "bmi must be in range (20, 40)",
-  cholesterol_ratio:"cholesterol ratio must be in range (1,12)",
-  diabetes:         "invalid diabetes type, options: " + QRisk.DIABETES_TYPES.map{|_|_.to_s}.to_s,
-  ethnicity:        "invalid ethnicity type, options: " + QRisk.ETHNICITY_TYPES.map{|_|_.to_s}.to_s,
-  gender:           "invalid gender, options: " + QRisk.GENDERS.map{|_|_.to_s}.to_s,
-  smoker:           "invalid smoker type, options: " + QRisk.SMOKER_TYPES.map{|_|_.to_s}.to_s
-};end
-
 def to_i value
   (value.eql? true or value.to_s == "true" or (
     value.to_f != 0 if value.respond_to? 'to_f'
@@ -556,8 +569,5 @@ end
 
 end
 
-#puts QRisk.eval gender: :none
-#puts QRisk.eval
-#puts QRisk.eval eval age: 25, cholesterol_ratio: 11, blood_pressure: 210, body_mass_index: 40
-puts QRisk.eval eval ARGV[0].to_s
+p QRisk.eval eval ARGV[0].to_s
 
