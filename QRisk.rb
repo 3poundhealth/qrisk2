@@ -27,16 +27,19 @@ def eval options = {}
     @CHOLESTEROL_RATIO_CENTERING = QRisk.CHOLESTEROL_RATIO_CENTERING
     @CHOLESTEROL_RATIO_CONTINUOUS = QRisk.CHOLESTEROL_RATIO_CONTINUOUS
     @DECADE_ODDS = QRisk.DECADE_ODDS
-    @DIABETES = options[:diabetes]
+    @DIABETES = options[:diabetes].to_sym
     @DIABETES_DEPENDENT = QRisk.DIABETES_DEPENDENT
     @DIABETES_INDEPENDENT = QRisk.DIABETES_INDEPENDENT
     @DIABETES_TYPES = QRisk.DIABETES_TYPES
-    @ETHNICITY = options[:ethnicity]
+    @ETHNICITY = options[:ethnicity].to_sym
     @ETHNICITY_RISK = QRisk.ETHNICITY_RISK
-    @GENDER = options[:gender]
+    @ETHNICITY_TYPES = QRisk.ETHNICITY_TYPES
+    @GENDER = options[:gender].to_sym
     @GENDERS = QRisk.GENDERS
-    @SMOKER = options[:smoker]
+    @SMOKER = options[:smoker].to_sym
     @SMOKER_INDEPENDENT = QRisk.SMOKER_INDEPENDENT
+    @SMOKER_DEPENDENT = QRisk.SMOKER_DEPENDENT
+    @SMOKER_TYPES = QRisk.SMOKER_TYPES
     @HEART_DISEASED_RELATIVE_INDEPENDENT = QRisk.HEART_DISEASED_RELATIVE_INDEPENDENT
     @HEART_DISEASED_RELATIVE_DEPENDENT = QRisk.HEART_DISEASED_RELATIVE_DEPENDENT
     @KIDNEY_DISEASE_INDEPENDENT = QRisk.KIDNEY_DISEASE_INDEPENDENT
@@ -46,15 +49,18 @@ def eval options = {}
     @BLOOD_PRESSURE_TREATMENT_INDEPENDENT = QRisk.BLOOD_PRESSURE_TREATMENT_INDEPENDENT
     @BLOOD_PRESSURE_TREATMENT_DEPENDENT = QRisk.BLOOD_PRESSURE_TREATMENT_DEPENDENT
     @RHEUMATIOD_ARTHRITIS_INDEPENDENT = QRisk.RHEUMATIOD_ARTHRITIS_INDEPENDENT
-    @SMOKER = options[:smoker]
-    @SMOKER_DEPENDENT = QRisk.SMOKER_DEPENDENT
+
     @DEBUG = options[:internal_debug]
 
     #validate
     raise @ERRORS[:gender] unless @GENDERS.include? @GENDER
     raise @ERRORS[:age] unless (25..84).include? @AGE or @AGE == 0
     raise @ERRORS[:bmi] unless (20..40).include? @BMI or @BMI == 0
+    raise @ERRORS[:blood_pressure] unless (70..210).include? @BLOOD_PRESSURE or @BLOOD_PRESSURE == 0
+    raise @ERRORS[:cholesterol_ratio] unless (1..12).include? @CHOLESTEROL_RATIO or @CHOLESTEROL_RATIO == 0
     raise @ERRORS[:diabetes] unless @DIABETES_TYPES.include? @DIABETES
+    raise @ERRORS[:ethnicity] unless @ETHNICITY_TYPES.include? @ETHNICITY
+    raise @ERRORS[:smoker] unless @SMOKER_TYPES.include? @SMOKER
 
     #scale these "constants"
     @AGE *= QRisk.AGE_SCALE
@@ -68,10 +74,10 @@ def eval options = {}
     @BLOOD_PRESSURE_CENTER    = @BLOOD_PRESSURE    - @BLOOD_PRESSURE_CENTERING    [@GENDER]
     @CHOLESTEROL_RATIO_CENTER = @CHOLESTEROL_RATIO - @CHOLESTEROL_RATIO_CENTERING [@GENDER]
 
-printf "a1: %6.2f, a2: %6.2f\n", @AGE_UPPER, @AGE_LOWER if @DEBUG
-printf "b1: %6.2f, b2: %6.2f\n", @BMI_UPPER, @BMI_LOWER if @DEBUG
-printf "cr: %6.2f, bp: %6.2f\n", @CHOLESTEROL_RATIO_CENTER * @CHOLESTEROL_RATIO_CONTINUOUS [@GENDER],
-                                 @BLOOD_PRESSURE_CENTER    * @BLOOD_PRESSURE_CONTINUOUS    [@GENDER] if @DEBUG
+    printf "a1: %6.2f, a2: %6.2f\n", @AGE_UPPER, @AGE_LOWER if @DEBUG
+    printf "b1: %6.2f, b2: %6.2f\n", @BMI_UPPER, @BMI_LOWER if @DEBUG
+    printf "cr: %6.2f, bp: %6.2f\n", @CHOLESTEROL_RATIO_CENTER * @CHOLESTEROL_RATIO_CONTINUOUS [@GENDER],
+                                     @BLOOD_PRESSURE_CENTER    * @BLOOD_PRESSURE_CONTINUOUS    [@GENDER] if @DEBUG
 
     #evaluate booleans
     @HEART_DISEASED_RELATIVE  = to_i options[:heart_diseased_relative]
@@ -80,51 +86,51 @@ printf "cr: %6.2f, bp: %6.2f\n", @CHOLESTEROL_RATIO_CENTER * @CHOLESTEROL_RATIO_
     @BLOOD_PRESSURE_TREATMENT = to_i options[:blood_pressure_treatment]
     @RHEUMATIOD_ARTHRITIS     = to_i options[:rheumatoid_arthritis]
 
-printf "af:%5.2f, ra:%5.2f, rn:%5.2f, tr:%5.2f, rl:%5.2f, db:%5.2f\n",
-@ATRIAL_FIBRILLATION                   * @ATRIAL_FIBRILLATION_INDEPENDENT      [@GENDER],
-@RHEUMATIOD_ARTHRITIS                  * @RHEUMATIOD_ARTHRITIS_INDEPENDENT     [@GENDER],
-@KIDNEY_DISEASE                        * @KIDNEY_DISEASE_INDEPENDENT           [@GENDER],
-@BLOOD_PRESSURE_TREATMENT              * @BLOOD_PRESSURE_TREATMENT_INDEPENDENT [@GENDER],
-@HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER],
-@DIABETES_INDEPENDENT                   [@GENDER][@DIABETES] if @DEBUG
+    printf "af:%5.2f, ra:%5.2f, rn:%5.2f, tr:%5.2f, rl:%5.2f, db:%5.2f\n",
+      @ATRIAL_FIBRILLATION                   * @ATRIAL_FIBRILLATION_INDEPENDENT      [@GENDER],
+      @RHEUMATIOD_ARTHRITIS                  * @RHEUMATIOD_ARTHRITIS_INDEPENDENT     [@GENDER],
+      @KIDNEY_DISEASE                        * @KIDNEY_DISEASE_INDEPENDENT           [@GENDER],
+      @BLOOD_PRESSURE_TREATMENT              * @BLOOD_PRESSURE_TREATMENT_INDEPENDENT [@GENDER],
+      @HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER],
+      @DIABETES_INDEPENDENT                   [@GENDER][@DIABETES] if @DEBUG
 
-printf "i:%6.2f u:%6.2f l:%6.2f\n",
-        @ETHNICITY_RISK                         [@GENDER][@ETHNICITY]                                           +
-        @SMOKER_INDEPENDENT                     [@GENDER][@SMOKER]                                              +
-        @DIABETES_INDEPENDENT                   [@GENDER][@DIABETES]                                            +
-        @BMI_UPPER                             * @BMI_CONTINUOUS                       [@GENDER][:bmi_upper]    +
-        @BMI_LOWER                             * @BMI_CONTINUOUS                       [@GENDER][:bmi_lower]    +
-        @HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER]                +
-        @KIDNEY_DISEASE                        * @KIDNEY_DISEASE_INDEPENDENT           [@GENDER]                +
-        @ATRIAL_FIBRILLATION                   * @ATRIAL_FIBRILLATION_INDEPENDENT      [@GENDER]                +
-        @BLOOD_PRESSURE_TREATMENT              * @BLOOD_PRESSURE_TREATMENT_INDEPENDENT [@GENDER]                +
-        @RHEUMATIOD_ARTHRITIS                  * @RHEUMATIOD_ARTHRITIS_INDEPENDENT     [@GENDER],
+    printf "i:%6.2f u:%6.2f l:%6.2f\n",
+      @ETHNICITY_RISK                         [@GENDER][@ETHNICITY]                                           +
+      @SMOKER_INDEPENDENT                     [@GENDER][@SMOKER]                                              +
+      @DIABETES_INDEPENDENT                   [@GENDER][@DIABETES]                                            +
+      @BMI_UPPER                             * @BMI_CONTINUOUS                       [@GENDER][:bmi_upper]    +
+      @BMI_LOWER                             * @BMI_CONTINUOUS                       [@GENDER][:bmi_lower]    +
+      @HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER]                +
+      @KIDNEY_DISEASE                        * @KIDNEY_DISEASE_INDEPENDENT           [@GENDER]                +
+      @ATRIAL_FIBRILLATION                   * @ATRIAL_FIBRILLATION_INDEPENDENT      [@GENDER]                +
+      @BLOOD_PRESSURE_TREATMENT              * @BLOOD_PRESSURE_TREATMENT_INDEPENDENT [@GENDER]                +
+      @RHEUMATIOD_ARTHRITIS                  * @RHEUMATIOD_ARTHRITIS_INDEPENDENT     [@GENDER],
 
-        #age spread dependent risks
-        @AGE_UPPER * @HEART_DISEASED_RELATIVE  * @HEART_DISEASED_RELATIVE_DEPENDENT    [@GENDER][:age_upper]    +
-        @AGE_UPPER * @KIDNEY_DISEASE           * @KIDNEY_DISEASE_DEPENDENT             [@GENDER][:age_upper]    +
-        @AGE_UPPER * @ATRIAL_FIBRILLATION      * @ATRIAL_FIBRILLATION_DEPENDENT        [@GENDER][:age_upper]    +
-        @AGE_UPPER * @BLOOD_PRESSURE_TREATMENT * @BLOOD_PRESSURE_TREATMENT_DEPENDENT   [@GENDER][:age_upper]    +
-        @AGE_UPPER * @SMOKER_DEPENDENT          [@GENDER][:age_upper][@SMOKER]                                  +
-        @AGE_UPPER * @DIABETES_DEPENDENT        [@GENDER][:age_upper][@DIABETES]                                +
-        @AGE_UPPER * @BMI_UPPER * @BMI_DEPENDENT             [@GENDER][:age_upper][:bmi_upper]                  +
-        @AGE_UPPER * @BMI_LOWER * @BMI_DEPENDENT             [@GENDER][:age_upper][:bmi_lower]                  +
-        @AGE_UPPER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_upper],
+      #age spread dependent risks
+      @AGE_UPPER * @HEART_DISEASED_RELATIVE  * @HEART_DISEASED_RELATIVE_DEPENDENT    [@GENDER][:age_upper]    +
+      @AGE_UPPER * @KIDNEY_DISEASE           * @KIDNEY_DISEASE_DEPENDENT             [@GENDER][:age_upper]    +
+      @AGE_UPPER * @ATRIAL_FIBRILLATION      * @ATRIAL_FIBRILLATION_DEPENDENT        [@GENDER][:age_upper]    +
+      @AGE_UPPER * @BLOOD_PRESSURE_TREATMENT * @BLOOD_PRESSURE_TREATMENT_DEPENDENT   [@GENDER][:age_upper]    +
+      @AGE_UPPER * @SMOKER_DEPENDENT          [@GENDER][:age_upper][@SMOKER]                                  +
+      @AGE_UPPER * @DIABETES_DEPENDENT        [@GENDER][:age_upper][@DIABETES]                                +
+      @AGE_UPPER * @BMI_UPPER * @BMI_DEPENDENT             [@GENDER][:age_upper][:bmi_upper]                  +
+      @AGE_UPPER * @BMI_LOWER * @BMI_DEPENDENT             [@GENDER][:age_upper][:bmi_lower]                  +
+      @AGE_UPPER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_upper],
 
-        @AGE_LOWER * @HEART_DISEASED_RELATIVE  * @HEART_DISEASED_RELATIVE_DEPENDENT    [@GENDER][:age_lower]    +
-        @AGE_LOWER * @KIDNEY_DISEASE           * @KIDNEY_DISEASE_DEPENDENT             [@GENDER][:age_lower]    +
-        @AGE_LOWER * @ATRIAL_FIBRILLATION      * @ATRIAL_FIBRILLATION_DEPENDENT        [@GENDER][:age_lower]    +
-        @AGE_LOWER * @BLOOD_PRESSURE_TREATMENT * @BLOOD_PRESSURE_TREATMENT_DEPENDENT   [@GENDER][:age_lower]    +
-        @AGE_LOWER * @SMOKER_DEPENDENT          [@GENDER][:age_lower][@SMOKER]                                  +
-        @AGE_LOWER * @DIABETES_DEPENDENT        [@GENDER][:age_lower][@DIABETES]                                +
-        @AGE_LOWER * @BMI_UPPER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_upper]                  +
-        @AGE_LOWER * @BMI_LOWER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_lower]                  +
-        @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_lower] if @DEBUG
+      @AGE_LOWER * @HEART_DISEASED_RELATIVE  * @HEART_DISEASED_RELATIVE_DEPENDENT    [@GENDER][:age_lower]    +
+      @AGE_LOWER * @KIDNEY_DISEASE           * @KIDNEY_DISEASE_DEPENDENT             [@GENDER][:age_lower]    +
+      @AGE_LOWER * @ATRIAL_FIBRILLATION      * @ATRIAL_FIBRILLATION_DEPENDENT        [@GENDER][:age_lower]    +
+      @AGE_LOWER * @BLOOD_PRESSURE_TREATMENT * @BLOOD_PRESSURE_TREATMENT_DEPENDENT   [@GENDER][:age_lower]    +
+      @AGE_LOWER * @SMOKER_DEPENDENT          [@GENDER][:age_lower][@SMOKER]                                  +
+      @AGE_LOWER * @DIABETES_DEPENDENT        [@GENDER][:age_lower][@DIABETES]                                +
+      @AGE_LOWER * @BMI_UPPER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_upper]                  +
+      @AGE_LOWER * @BMI_LOWER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_lower]                  +
+      @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_lower] if @DEBUG
 
-printf "bp:%6.2f bu:%6.2f bl:%6.2f\n",
-@BLOOD_PRESSURE_CENTER,
-@AGE_UPPER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_upper],
-@AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_lower] if @DEBUG
+    printf "bp:%6.2f bu:%6.2f bl:%6.2f\n",
+      @BLOOD_PRESSURE_CENTER,
+      @AGE_UPPER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_upper],
+      @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT[@GENDER][:age_lower] if @DEBUG
 
   rescue => exception
     abort "\033[31merror: " + exception.message + "\033[0m"
@@ -197,15 +203,35 @@ def OPTIONS;{ #default options
   blood_pressure:           0.0
 };end
 
+def DIABETES_TYPES;[
+  :none,
+  :type_1,
+  :type_2
+];end
+
+def ETHNICITY_TYPES;[
+  :white,
+  :indian,
+  :pakistani,
+  :bangladeshi,
+  :other_asian,
+  :black_caribbean,
+  :black_african,
+  :chinese,
+  :other
+];end
+
 def GENDERS;[
   :male,
   :female
 ];end
 
-def DIABETES_TYPES;[
-  :none,
-  :type_1,
-  :type_2
+def SMOKER_TYPES;[
+  :non,
+  :ex,
+  :light,
+  :moderate,
+  :heavy
 ];end
 
 def DECADE_ODDS;          0.978206992149353; end
@@ -458,7 +484,6 @@ def HEART_DISEASED_RELATIVE_DEPENDENT;{
   }
 };end
 
-
 def KIDNEY_DISEASE_INDEPENDENT;{
   male:                   0.7661782832063270800000000,
   female:                 0.8000369779764396900000000
@@ -474,7 +499,6 @@ def KIDNEY_DISEASE_DEPENDENT;{
     age_lower:           -0.5666471358116902400000000
   }
 };end
-
 
 def ATRIAL_FIBRILLATION_INDEPENDENT;{
   male:                   0.8561770660317954400000000,
@@ -492,7 +516,6 @@ def ATRIAL_FIBRILLATION_DEPENDENT;{
   }
 };end
 
-
 def BLOOD_PRESSURE_TREATMENT_INDEPENDENT;{
   male:                   0.6570994445804946300000000,
   female:                 0.6183822524814552900000000
@@ -509,17 +532,20 @@ def BLOOD_PRESSURE_TREATMENT_DEPENDENT;{
   }
 };end
 
-
 def RHEUMATIOD_ARTHRITIS_INDEPENDENT;{
   male:                   0.3295853885133138700000000,
   female:                 0.3660166445401525400000000
 };end
 
 def ERRORS;{
-  gender:     "invalid gender",
-  age:        "age must be in range (25, 84)",
-  diabetes:   "invalid diabetes type",
-  bmi:        "bmi must be in range (20, 40)"
+  age:              "age must be in range (25, 84)",
+  blood_pressure:   "blood pressure must be in range (70,210)",
+  bmi:              "bmi must be in range (20, 40)",
+  cholesterol_ratio:"cholesterol ratio must be in range (1,12)",
+  diabetes:         "invalid diabetes type, options: " + QRisk.DIABETES_TYPES.map{|_|_.to_s}.to_s,
+  ethnicity:        "invalid ethnicity type, options: " + QRisk.ETHNICITY_TYPES.map{|_|_.to_s}.to_s,
+  gender:           "invalid gender, options: " + QRisk.GENDERS.map{|_|_.to_s}.to_s,
+  smoker:           "invalid smoker type, options: " + QRisk.SMOKER_TYPES.map{|_|_.to_s}.to_s
 };end
 
 def to_i value
