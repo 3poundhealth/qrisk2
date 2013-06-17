@@ -9,7 +9,7 @@
   
 ###   Parameters ###
 
-options(<code><span style="padding-top:2px;border:1px solid rgb(221, 221, 221);border-radius:3px;background-color:rgb(248, 248, 248)">Hash&lt;<span style="color:purple">​Symbol</span>, <span style="color:cadetblue">Object</span>&gt;</span></span></code>) (defaults to: `{}`) — initial context configuration
+options(<code>Hash&lt;<span style="color:purple">​Symbol</span>, <span style="color:cadetblue">Object</span>&gt;</span></code>) (defaults to: `{}`) — initial context configuration
 
 ```ruby
 age:                      25..8  
