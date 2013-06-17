@@ -192,6 +192,8 @@ end
 
 protected
 
+$, = ", " #default join
+
 def OPTIONS;{ #default options
   gender:                  :male,
   age:                      0,
@@ -214,10 +216,10 @@ def ERRORS;{
   blood_pressure:   "blood pressure must be in range: " + QRisk.BLOOD_PRESSURE_RANGE.to_s,
   bmi:              "bmi must be in range: " + QRisk.BMI_RANGE.to_s,
   cholesterol_ratio:"cholesterol ratio must be in range: " + QRisk.CHOLESTEROL_RATIO_RANGE.to_s,
-  diabetes:         "invalid diabetes type, options: " + QRisk.DIABETES_TYPES.map{|_|_.to_s}.to_s,
-  ethnicity:        "invalid ethnicity type, options: " + QRisk.ETHNICITY_TYPES.map{|_|_.to_s}.to_s,
-  gender:           "invalid gender, options: " + QRisk.GENDERS.map{|_|_.to_s}.to_s,
-  smoker:           "invalid smoker type, options: " + QRisk.SMOKER_TYPES.map{|_|_.to_s}.to_s
+  diabetes:         "invalid diabetes type, options: " + QRisk.DIABETES_TYPES.join,
+  ethnicity:        "invalid ethnicity type, options: " + QRisk.ETHNICITY_TYPES.join,
+  gender:           "invalid gender, options: " + QRisk.GENDERS.join,
+  smoker:           "invalid smoker type, options: " + QRisk.SMOKER_TYPES.join
 };end
 
 def DIABETES_TYPES;[
@@ -571,5 +573,5 @@ end
 
 end
 
-puts QRisk.eval ARGV[0] ? eval(ARGV[0].to_s) : {}
+puts QRisk.eval eval(ARGV[0].to_s) if ARGV.length !=0
 
