@@ -64,51 +64,51 @@ QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, b
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity white"
-qrisk 25 1 1 1 1 0 1 25 0 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 1 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :white, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity indian"
-qrisk 25 1 1 1 1 0 1 40 1 1 4 120 2 10 0 1 > c.out || true
-QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 4, blood_pressure: 120, body_mass_index: 40, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :indian, internal_debug: true}" > ruby.out
+qrisk 25 1 1 1 1 0 1 25 2 1 11 120 2 10 0 1 > c.out || true
+QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :indian, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity pakistani"
-qrisk 25 1 1 1 1 0 1 25 2 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 3 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :pakistani, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity bangladeshi"
-qrisk 25 1 1 1 1 0 1 25 3 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 4 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :bangladeshi, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity other_asian"
-qrisk 25 1 1 1 1 0 1 25 4 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 5 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :other_asian, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity black_caribbean"
-qrisk 25 1 1 1 1 0 1 25 5 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 6 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :black_caribbean, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity black_african"
-qrisk 25 1 1 1 1 0 1 25 6 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 7 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :black_african, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity chinese"
-qrisk 25 1 1 1 1 0 1 25 7 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 8 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :chinese, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 OP="ethnicity other"
-qrisk 25 1 1 1 1 0 1 25 8 1 11 120 2 10 0 1 > c.out || true
+qrisk 25 1 1 1 1 0 1 25 9 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :male, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_2, smoker: :light, ethnicity: :other, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 
 trap - int term exit
-echo "all tests pass"
+echo -e "];All Tests Passed!\a[32mAll Tests Passed[36m!![0m"
 

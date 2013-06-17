@@ -98,7 +98,7 @@ def eval options = {}
       @HEART_DISEASED_RELATIVE               * @HEART_DISEASED_RELATIVE_INDEPENDENT  [@GENDER],
       @DIABETES_INDEPENDENT                   [@GENDER][@DIABETES] if @DEBUG
 
-    printf "i:%6.2f u:%6.2f l:%6.2f\n",
+    printf "i:%6.2f u:%6.2f l:%6.2f er:%6.2f\n",
       @ETHNICITY_RISK                         [@GENDER][@ETHNICITY]                                           +
       @SMOKER_INDEPENDENT                     [@GENDER][@SMOKER]                                              +
       @DIABETES_INDEPENDENT                   [@GENDER][@DIABETES]                                            +
@@ -129,7 +129,9 @@ def eval options = {}
       @AGE_LOWER * @DIABETES_DEPENDENT        [@GENDER][:age_lower][@DIABETES]                                +
       @AGE_LOWER * @BMI_UPPER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_upper]                  +
       @AGE_LOWER * @BMI_LOWER * @BMI_DEPENDENT             [@GENDER][:age_lower][:bmi_lower]                  +
-      @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_lower] if @DEBUG
+      @AGE_LOWER * @BLOOD_PRESSURE_CENTER * @BLOOD_PRESSURE_DEPENDENT  [@GENDER][:age_lower],
+
+      @ETHNICITY_RISK[@GENDER][@ETHNICITY] if @DEBUG
 
     printf "bp:%6.2f bu:%6.2f bl:%6.2f\n",
       @BLOOD_PRESSURE_CENTER,
