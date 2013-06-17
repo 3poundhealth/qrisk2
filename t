@@ -2,7 +2,7 @@
 
 trap 'echo -e "\n[32m$OP[31m failed[\n35m"; cat diff.out; echo -e "[0m"' int term exit
 
-echo "" > diff.out
+rm -f *.out
 
 OP="qrisk build"
 gcc -I. *.c -o qrisk 2> diff.out
@@ -110,5 +110,6 @@ diff -y --suppress-common-lines ruby.out c.out > diff.out
 
 
 trap - int term exit
+rm -f *.out
 echo -e "];All Tests Passed!\a[32mAll Tests Passed[36m!![0m"
 
