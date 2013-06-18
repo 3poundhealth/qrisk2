@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-trap 'echo -e "\n[32m$OP[31m failed[\n35m"; cat diff.out; echo -e "[0m"' int term exit
+trap 'echo -e "];Failed: $OP\a\n[32m$OP[31m failed[\n35m"; cat diff.out; echo -e "[0m"' int term exit
 
 rm -f *.out
 
