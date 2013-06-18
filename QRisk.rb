@@ -144,7 +144,7 @@ def eval options = {}
     #calculate
     options.to_s + " => "
     "%.6f" % (
-      100 * (1 - @decade_odds ** Math.exp(
+      100 * (1 - @decade_odds[@gender] ** Math.exp(
         #age spread independent risks
         @ethnicity_risk                         [@gender][@ethnicity]                                           +
         @smoker_independent                     [@gender][@smoker]                                              +
@@ -409,7 +409,10 @@ def CHOLESTEROL_RATIO_CONTINUOUS;{
 
 def CHOLESTEROL_RATIO_RANGE; (1..12); end
 
-def DECADE_ODDS;          0.978206992149353; end
+def DECADE_ODDS;{
+  male:                   0.978206992149353,
+  female:                 0.988779306411743
+};end
 
 def DIABETES_DEPENDENT;{
   male:{
@@ -575,3 +578,4 @@ end
 
 puts QRisk.eval eval(ARGV[0].to_s) if ARGV.length !=0
 
+self

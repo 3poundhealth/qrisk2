@@ -94,6 +94,7 @@ int age,int b_AF,int b_ra,int b_renal,int b_treatedhyp,int b_type1,int b_type2,d
 	dbmi=dbmi/10;
 	double bmi_1 = pow(dbmi,-2);
 	double bmi_2 = pow(dbmi,-2)*log(dbmi);
+
 	/* Centring the continuous variables */
 
 	age_1 = age_1 - 0.229260012507439;
