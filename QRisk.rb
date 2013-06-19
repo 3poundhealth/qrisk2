@@ -207,7 +207,6 @@ def OPTIONS;{ #default options
   blood_pressure_treatment: false,
   rheumatoid_arthritis:     false,
   cholesterol_ratio:        3.7,
-  body_mass_index:          0.0,
   blood_pressure:           0.0
 };end
 
@@ -578,4 +577,3 @@ end
 
 puts QRisk.eval eval(ARGV[0].to_s) if ARGV.length !=0
 
-self
