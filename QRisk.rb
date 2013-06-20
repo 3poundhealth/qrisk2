@@ -33,6 +33,7 @@ def eval options = {}
     @cholesterol_ratio = options[:cholesterol_ratio]
     @cholesterol_ratio_centering = QRisk.CHOLESTEROL_RATIO_CENTERING
     @cholesterol_ratio_continuous = QRisk.CHOLESTEROL_RATIO_CONTINUOUS
+    @cholesterol_ratio_range = QRisk.CHOLESTEROL_RATIO_RANGE
     @decade_odds = QRisk.DECADE_ODDS
     @diabetes = options[:diabetes].to_sym
     @diabetes_dependent = QRisk.DIABETES_DEPENDENT
@@ -60,7 +61,7 @@ def eval options = {}
     raise @errors[:age] unless @age_range.include? @age or @age == 0
     raise @errors[:blood_pressure] unless @blood_pressure_range.include? @blood_pressure or @blood_pressure == 0
     raise @errors[:bmi] unless @bmi_range.include? @bmi or @bmi == 0
-    raise @errors[:cholesterol_ratio] unless @diabetes_ratio_range.include? @cholesterol_ratio or @cholesterol_ratio == 0
+    raise @errors[:cholesterol_ratio] unless @cholesterol_ratio_range.include? @cholesterol_ratio or @cholesterol_ratio == 0
     raise @errors[:diabetes] unless @diabetes_types.include? @diabetes
     raise @errors[:ethnicity] unless @ethnicity_types.include? @ethnicity
     raise @errors[:gender] unless @genders.include? @gender
