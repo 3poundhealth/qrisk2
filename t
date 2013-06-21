@@ -155,7 +155,6 @@ qriskf 25 1 1 1 1 1 0 25 1 1 11 120 1 10 0 1 > c.out || true
 QRisk.rb "{gender: :female, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_1, smoker: :ex, internal_debug: true}" > ruby.out
 diff -y --suppress-common-lines ruby.out c.out > diff.out
 
-
 OP="female light smoker"
 qriskf 25 1 1 1 1 1 0 25 1 1 11 120 2 10 0 1 > c.out || true
 QRisk.rb "{gender: :female, age: 25, cholesterol_ratio: 11, blood_pressure: 120, body_mass_index: 25, atrial_fibrillation: true, blood_pressure_treatment: true, heart_diseased_relative: true, kidney_disease: true, rheumatoid_arthritis: true, diabetes: :type_1, smoker: :light, internal_debug: true}" > ruby.out
