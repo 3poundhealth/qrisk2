@@ -1,5 +1,5 @@
 # Module: QRisk#
-        `Defined in: QRisk.rb`
+        `Defined in: qrisk.rb`
 
 ---
 ### Public Class Methods ###
@@ -12,7 +12,7 @@
 options(<code>Hash&lt;<span style="color:purple">​Symbol</span>, <span style="color:cadetblue">Object</span>&gt;</span></code>) (defaults to: `{}`) — initial context configuration
 
 ```ruby
-age:                      25..8  
+age:                      25..84  
 cholesterol_ratio:         1..12  
 blood_pressure:           70..210  
 body_mass_index:          20..40  
